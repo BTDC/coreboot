@@ -1,0 +1,2 @@
+config BOARD_AMD_IPC_FP4_LC
+	bool "IPC-FP4-LC"

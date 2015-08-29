@@ -26,7 +26,7 @@
 #include <heapManager.h>
 #include <northbridge/amd/pi/agesawrapper.h>
 #include <northbridge/amd/pi/BiosCallOuts.h>
-#if IS_ENABLED(CONFIG_BOARD_AMD_BETTONG)
+#if IS_ENABLED(CONFIG_BOARD_AMD_BETTONG) || IS_ENABLED(CONFIG_BOARD_AMD_IPC_FP4_LC)
 #include <PlatformMemoryConfiguration.h>
 #include "board_rev.h"
 #endif
@@ -170,6 +170,20 @@ AGESA_STATUS agesawrapper_amdinitpost(void)
 		PostParams->MemConfig.PlatformMemoryConfiguration = (PSO_ENTRY *)DDR4PlatformMemoryConfiguration;
 	else
 		PostParams->MemConfig.PlatformMemoryConfiguration = (PSO_ENTRY *)DDR3PlatformMemoryConfiguration;
+#endif
+#if IS_ENABLED(CONFIG_BOARD_AMD_IPC_FP4_LC)
+	PSO_ENTRY DDR4PlatformMemoryConfiguration[] = {
+		DRAM_TECHNOLOGY(ANY_SOCKET, DDR4_TECHNOLOGY),
+		NUMBER_OF_DIMMS_SUPPORTED (ANY_SOCKET, ANY_CHANNEL, 2),
+		NUMBER_OF_CHANNELS_SUPPORTED (ANY_SOCKET, 2),
+		MOTHER_BOARD_LAYERS (LAYERS_6),
+		MEMCLK_DIS_MAP (ANY_SOCKET, ANY_CHANNEL, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00),
+		CKE_TRI_MAP (ANY_SOCKET, ANY_CHANNEL, 0xff, 0xff, 0xff, 0xff),
+		ODT_TRI_MAP (ANY_SOCKET, ANY_CHANNEL, 0xff, 0xff, 0xff, 0xff),
+		CS_TRI_MAP (ANY_SOCKET, ANY_CHANNEL, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00),
+		PSO_END
+	};
+	PostParams->MemConfig.PlatformMemoryConfiguration = (PSO_ENTRY *)DDR4PlatformMemoryConfiguration;
 #endif
 	// Do not use IS_ENABLED here.  CONFIG_GFXUMA should always have a value.  Allow
 	// the compiler to flag the error if CONFIG_GFXUMA is not set.

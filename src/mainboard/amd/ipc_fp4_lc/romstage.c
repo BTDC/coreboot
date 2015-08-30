@@ -39,10 +39,6 @@ void cache_as_ram_main(unsigned long bist, unsigned long cpu_init_detectedx)
 #if CONFIG_HAVE_ACPI_RESUME
 	void *resume_backup_memory;
 #endif
-#if CONFIG_DRIVERS_UART_8250MEM
-	u8 byte;
-	msr_t msr;
-#endif
 
 	amd_initmmio();
 
@@ -52,24 +48,6 @@ void cache_as_ram_main(unsigned long bist, unsigned long cpu_init_detectedx)
 		post_code(0x30);
 
 		post_code(0x31);
-#if CONFIG_DRIVERS_UART_8250MEM
-		msr = rdmsr(0x1B);
-		msr.lo |= 1 << 11;
-		wrmsr(0x1B, msr);
-		byte = read8(ACPI_MMIO_BASE + AOAC_BASE + 0x56 + CONFIG_UART_FOR_CONSOLE * 2);
-		byte |= 1 << 3;
-		write8(ACPI_MMIO_BASE + AOAC_BASE + 0x56 + CONFIG_UART_FOR_CONSOLE * 2, byte);
-		byte = read8(ACPI_MMIO_BASE + AOAC_BASE + 0x62);
-		byte |= 1 << 3;
-		write8(ACPI_MMIO_BASE + AOAC_BASE + 0x62, byte);
-		write8(ACPI_MMIO_BASE + 0xD00 + 0x89, 0);
-		write8(ACPI_MMIO_BASE + 0xD00 + 0x8A, 0);
-		write8(ACPI_MMIO_BASE + 0xD00 + 0x8E, 0);
-		write8(ACPI_MMIO_BASE + 0xD00 + 0x8F, 0);
-
-		udelay(2000);
-		write8((void *)0xFEDC6000 + 0x2000 * CONFIG_UART_FOR_CONSOLE + 0x88, 0x01); //reset UART
-#endif
 		console_init();
 	}
 

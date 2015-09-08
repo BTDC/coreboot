@@ -44,6 +44,27 @@ void cache_as_ram_main(unsigned long bist, unsigned long cpu_init_detectedx)
 
 	hudson_lpc_port80();
 
+	// MiscClkCntl1, enable OSCOUT2
+	*((u32 *)0xfed80e40) &= ~(1 << 7);
+
+	// enter config
+	outb(0x87,0x4e);
+	outb(0x87,0x4e);
+
+	//  Full UART2
+	outb(0x2a,0x4e);
+	outb(0x00,0x4f);
+
+	// uart2
+	outb(0x07,0x4e);
+	outb(0x02,0x4f);
+
+	outb(0x30,0x4e);
+	outb(0x01,0x4f);
+
+	// disable config
+	outb(0xaa,0x4e);
+
 	if (!cpu_init_detectedx && boot_cpu()) {
 		post_code(0x30);
 
